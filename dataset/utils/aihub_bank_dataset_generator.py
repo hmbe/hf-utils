@@ -66,6 +66,7 @@ class FunsdAihubBank(datasets.GeneratorBasedBuilder):
     ]
 
     def __init__(self, downloaded_file):
+        super().__init__()
         self.downloaded_file = downloaded_file
 
     def _info(self):
