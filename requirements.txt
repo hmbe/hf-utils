@@ -4,3 +4,4 @@ accelerate
 boto3
 evaluate
 torch
+seqeval

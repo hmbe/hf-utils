@@ -65,6 +65,9 @@ class FunsdAihubBank(datasets.GeneratorBasedBuilder):
         FunsdConfig(name="funsd", version=datasets.Version("1.0.0"), description="FUNSD dataset"),
     ]
 
+    def __init__(self, downloaded_file):
+        self.downloaded_file = downloaded_file
+
     def _info(self):
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -98,13 +101,12 @@ class FunsdAihubBank(datasets.GeneratorBasedBuilder):
         #     ),
         # ]
 
-        downloaded_file = '/content/aihub_bank_funsd'
         return [
             datasets.SplitGenerator(
-                name=datasets.Split.TRAIN, gen_kwargs={"filepath": f"{downloaded_file}/train/"}
+                name=datasets.Split.TRAIN, gen_kwargs={"filepath": f"{self.downloaded_file}/train/"}
             ),
             datasets.SplitGenerator(
-                name=datasets.Split.TEST, gen_kwargs={"filepath": f"{downloaded_file}/validation/"}
+                name=datasets.Split.TEST, gen_kwargs={"filepath": f"{self.downloaded_file}/validation/"}
             ),
         ]
 
