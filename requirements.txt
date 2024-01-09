@@ -1,0 +1,6 @@
+transformers
+datasets
+accelerate
+boto3
+evaluate
+torch

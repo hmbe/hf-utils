@@ -3,6 +3,11 @@ import os
 from datasets import Features, Sequence, ClassLabel, Value, Array2D, Array3D
 from functools import partial
 
+import evaluate
+import torch
+import numpy as np
+
+
 def init_s3_resource(aws_access_key_id, aws_secret_access_key, region_name='ap-northeast-2'):
     s3_resource = boto3.resource(
         's3',
@@ -110,3 +115,43 @@ def preprocess_dataset_lilt(dataset, tokenizer):
     )
 
     return train_dataset, eval_dataset
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# Metric
+metric = evaluate.load("seqeval")
+return_entity_level_metrics = False
+
+### use partial for huggingface trainer
+def compute_metrics(p, label_list):
+    predictions, labels = p
+    predictions = np.argmax(predictions, axis=2)
+
+    # Remove ignored index (special tokens)
+    true_predictions = [
+        [label_list[p] for (p, l) in zip(prediction, label) if l != -100]
+        for prediction, label in zip(predictions, labels)
+    ]
+    true_labels = [
+        [label_list[l] for (p, l) in zip(prediction, label) if l != -100]
+        for prediction, label in zip(predictions, labels)
+    ]
+
+    results = metric.compute(predictions=true_predictions, references=true_labels)
+    if return_entity_level_metrics:
+        # Unpack nested dictionaries
+        final_results = {}
+        for key, value in results.items():
+            if isinstance(value, dict):
+                for n, v in value.items():
+                    final_results[f"{key}_{n}"] = v
+            else:
+                final_results[key] = value
+        return final_results
+    else:
+        return {
+            "precision": results["overall_precision"],
+            "recall": results["overall_recall"],
+            "f1": results["overall_f1"],
+            "accuracy": results["overall_accuracy"],
+        }
