@@ -1,5 +1,5 @@
 from PIL import ImageDraw, ImageFont
-from dataset.utils.aihub_bank_dataset_generator import unnormalize_box
+from .aihub_bank_dataset_generator import unnormalize_box
 
 label_list = ["O", "B-HEADER", "I-HEADER", "B-QUESTION", "I-QUESTION", "B-ANSWER", "I-ANSWER"]
 id2label = {id:label for id, label in enumerate(label_list)}

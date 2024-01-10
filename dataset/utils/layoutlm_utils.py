@@ -8,7 +8,7 @@ import torch
 import numpy as np
 
 
-from dataset.utils.aihub_bank_dataset_generator import unnormalize_box
+from .aihub_bank_dataset_generator import unnormalize_box
 
 
 def init_s3_resource(aws_access_key_id, aws_secret_access_key, region_name='ap-northeast-2'):
